@@ -16,6 +16,7 @@ public class non_divisible_subset {
 
     public static int nonDivisibleSubset(int k, List<Integer> s) {
         HashMap<Integer, Integer> counter = new HashMap<>();
+        counter.put(0, 0);
         for (int i = 0; i < s.size(); i++) {
             if (counter.containsKey(s.get(i) % k)) {
                 counter.put(s.get(i) % k, counter.get(s.get(i) % k) + 1);
@@ -23,15 +24,26 @@ public class non_divisible_subset {
                 counter.put(s.get(i) % k, 1);
             }
         }
-        AtomicInteger max = new AtomicInteger(0);
-        List<Integer> keys = new ArrayList<Integer>(counter.keySet());
-        keys.forEach(item -> {
-            if (max.get() < counter.get(item)) {
-                max.set(counter.get(item));
+        int count = 1;
+        if(counter.containsKey(0)){
+           count = Math.min(1, counter.get(0));
+        }
+        for(int i=1;i<Math.floor(k/2)+1;i++){
+            if(i != k-i){
+                if(counter.containsKey(i) && counter.containsKey(k-i)){
+                    count+=Math.max(counter.get(i), counter.get(k-i));
+                }else if(counter.containsKey(i)){
+                    count+=counter.get(i);
+                }else if(counter.containsKey(k-i)){
+                    count+=counter.get(k-i);
+                }
             }
-        });
+        }
+        if(k%2 == 0){
+            count+=1;
+        }
 
-        return max.get();
+        return count;
     }
 
     public static void main(String[] args) throws IOException {
